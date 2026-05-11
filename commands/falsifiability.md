@@ -69,5 +69,5 @@ Status: {PASS / REVIEW REQUIRED}
 Next steps:
   Review the report and decide whether to add falsifiability framing or reframe as normative
   Re-run with --draft to have me propose four-block expansions for each Major finding
-  Use /theory-forge for the full audit suite
+  Use /theory-forge:theory-forge for the full audit suite
 ```

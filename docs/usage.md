@@ -8,16 +8,16 @@ After installing the plugin:
 
 ```
 # 1. From the root of an academic theory project, get the dashboard (with usage examples)
-/theory-forge
+/theory-forge:theory-forge
 
 # 1b. Get the same usage view without the project-status header
-/theory-forge help
+/theory-forge:theory-forge help
 
 # 1c. Get detailed help for a specific command
-/theory-forge help cite-audit
+/theory-forge:theory-forge help cite-audit
 
 # 2. Run the full audit suite
-/theory-forge .
+/theory-forge:theory-forge .
 
 # 3. Or pick a single sub-command
 /theory-forge:cite-audit
@@ -35,7 +35,7 @@ After installing the plugin:
 
 ## Sub-Command Reference
 
-### `/theory-forge` (orchestrator + dashboard)
+### `/theory-forge:theory-forge` (orchestrator + dashboard)
 
 **Purpose:** Top-level entry. With no arguments, shows the project's audit dashboard. With a path argument, runs all 8 audits in sequence and aggregates them.
 
@@ -43,13 +43,13 @@ After installing the plugin:
 
 ```
 # Dashboard
-/theory-forge
+/theory-forge:theory-forge
 
 # Full suite on current project
-/theory-forge .
+/theory-forge:theory-forge .
 
 # Full suite on a different project
-/theory-forge <path-to-other-theory>
+/theory-forge:theory-forge <path-to-other-theory>
 ```
 
 **Output:** Master report at `<project>/_research/theory-forge-master-report.md` with cross-audit findings highlighted.
@@ -288,13 +288,13 @@ Before submitting a paper to a journal:
 
 ```
 # 1. Full suite to surface all issues
-/theory-forge .
+/theory-forge:theory-forge .
 
 # 2. Address Critical and Major findings
 #    (review _research/theory-forge-master-report.md and act on each section)
 
 # 3. Re-run the full suite to verify clean status
-/theory-forge .
+/theory-forge:theory-forge .
 
 # 4. Check that the bibliography is hygienic
 /theory-forge:cite-audit

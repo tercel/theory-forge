@@ -72,7 +72,7 @@ Next steps:
   Review the report and decide on fixes
   Re-run /theory-forge:cite-audit after fixes to verify
   Use /theory-forge:consistency for cross-section component-list checking
-  Use /theory-forge to run the full audit suite
+  Use /theory-forge:theory-forge to run the full audit suite
 ```
 
 If `_research/` was newly created, remind the user:

@@ -2,7 +2,7 @@
 
 Rendered by `commands/theory-forge.md` Route A and Route A-help. The orchestrator main agent reads this file **only when actually rendering the dashboard** — never as part of routing logic, so it stays out of the main agent context during dispatching to sub-commands.
 
-## Full dashboard (`/theory-forge` with no args)
+## Full dashboard (`/theory-forge:theory-forge` with no args)
 
 Render this template, filling in the `{placeholder}` values:
 
@@ -23,9 +23,9 @@ COMMANDS — usage examples
 ──────────────────────────────────────────────────────────────────────────────
 
 Full suite (run all 8 audits and aggregate, parallel-wave execution)
-  /theory-forge .                              # current project
-  /theory-forge ../another-theory-project      # different project
-  /theory-forge . --sequential                 # sequential fallback (slower, observable)
+  /theory-forge:theory-forge .                              # current project
+  /theory-forge:theory-forge ../another-theory-project      # different project
+  /theory-forge:theory-forge . --sequential                 # sequential fallback (slower, observable)
 
 cite-audit  — verify every citation is real (CrossRef + Semantic Scholar + OpenAlex)
   /theory-forge:cite-audit                     # audit current project
@@ -78,19 +78,25 @@ propagate  — after editing an upstream doc, propagate downstream
   → writes _research/propagation-report-{timestamp}.md
 
 ──────────────────────────────────────────────────────────────────────────────
-ALIASES — each command works without the /theory-forge: prefix
+INVOCATION FORMS
 ──────────────────────────────────────────────────────────────────────────────
 
-  /cite-audit, /consistency, /falsifiability, /argument-structure,
-  /scope, /concept-import, /counter-argument, /cross-lang, /propagate
+  Claude Code requires the `plugin:command` form. Two equivalent ways to run
+  any sub-audit:
+
+    /theory-forge:theory-forge cite-audit       # through the orchestrator
+    /theory-forge:cite-audit                    # direct (skips routing)
+
+  There is NO bare `/theory-forge` or `/cite-audit` form. Typing those alone
+  produces `Unknown command`.
 
 ──────────────────────────────────────────────────────────────────────────────
 GETTING HELP
 ──────────────────────────────────────────────────────────────────────────────
 
-  /theory-forge help                           # this view (no project-status header)
-  /theory-forge help <command>                 # detailed help for one command
-  /theory-forge:help                           # same as /theory-forge help (direct skill)
+  /theory-forge:theory-forge help              # this view (no project-status header)
+  /theory-forge:theory-forge help <command>    # detailed help for one command
+  /theory-forge:help                           # same as above (direct skill)
   /theory-forge:help <command>                 # e.g. /theory-forge:help cite-audit
 
 Full reference:
@@ -99,11 +105,11 @@ Full reference:
   _research/self-audit-report.md  — known gaps in this tool itself
 ```
 
-## Help view (`/theory-forge help`)
+## Help view (`/theory-forge:theory-forge help`)
 
 Same as the dashboard above, but **omit** the "Project detected", "Bibliography", "Last full-suite run", and "Recent audit reports" header lines (lines 1–7). Start directly at the `──── COMMANDS ────` separator.
 
-## Detailed help (`/theory-forge help <command>`)
+## Detailed help (`/theory-forge:theory-forge help <command>`)
 
 Render this per-command template, sourcing the values from `commands/{command}.md` (description, argument-hint, Usage Examples block) and `skills/{command}/SKILL.md` (Anti-patterns, severity rules):
 
@@ -137,7 +143,7 @@ See also:
   docs/usage.md  — workflow recipes that use this command
 ```
 
-For an unknown command (`/theory-forge help foo`):
+For an unknown command (`/theory-forge:theory-forge help foo`):
 
 ```
 Unknown command: foo.
@@ -146,5 +152,5 @@ Available commands:
   cite-audit, consistency, falsifiability, argument-structure,
   scope, concept-import, counter-argument, cross-lang, propagate
 
-Run `/theory-forge help` to see all commands with usage examples.
+Run `/theory-forge:theory-forge help` to see all commands with usage examples.
 ```

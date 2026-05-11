@@ -72,5 +72,5 @@ Status: {PASS / REVIEW REQUIRED}
 Next steps:
   Review the report and decide which families to add examples for
   Re-run with --generate to have me propose draft examples (must be native-speaker reviewed)
-  Use /theory-forge for the full audit suite
+  Use /theory-forge:theory-forge for the full audit suite
 ```

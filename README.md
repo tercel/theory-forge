@@ -8,16 +8,16 @@
 
 ```bash
 # 1. See the dashboard with usage examples for all commands
-/theory-forge
+/theory-forge:theory-forge
 
 # 1b. Get help (same content as dashboard, without the project-status header)
-/theory-forge help
+/theory-forge:theory-forge help
 
 # 1c. Get detailed help for one command
-/theory-forge help cite-audit
+/theory-forge:theory-forge help cite-audit
 
 # 2. Run the full audit suite (all 8 audits, sequential)
-/theory-forge .
+/theory-forge:theory-forge .
 
 # 3. Or pick a single audit
 /theory-forge:cite-audit              # citation truth + bibliography integrity
@@ -62,19 +62,19 @@ Use outside the tested domain is at the user's discretion. The skill structure i
 
 ## Commands
 
-Each command can be invoked at the project root or with an explicit path. Aliases (without the `/theory-forge:` prefix) work identically.
+Each command can be invoked at the project root or with an explicit path. Claude Code requires the `plugin:command` form — there are **no** bare-name aliases (typing `/cite-audit` alone produces `Unknown command`; the colon-prefixed form `/theory-forge:cite-audit` is required).
 
 ---
 
-### `/theory-forge` — orchestrator + dashboard
+### `/theory-forge:theory-forge` — orchestrator + dashboard
 
 **Purpose:** With no arguments, shows the project audit dashboard. With a path, runs all 8 audits and aggregates.
 
 **Usage:**
 ```bash
-/theory-forge                          # dashboard
-/theory-forge .                        # full suite on current project
-/theory-forge ../other-theory-project  # full suite on different project
+/theory-forge:theory-forge                          # dashboard
+/theory-forge:theory-forge .                        # full suite on current project
+/theory-forge:theory-forge ../other-theory-project  # full suite on different project
 ```
 
 **Output:** `_research/theory-forge-master-report.md`. WebFetch: yes (delegated to cite-audit).
@@ -89,7 +89,6 @@ Each command can be invoked at the project root or with an explicit path. Aliase
 ```bash
 /theory-forge:cite-audit               # current project
 /theory-forge:cite-audit ../paper      # specific project
-/cite-audit                            # alias (works the same)
 ```
 
 **Output:** `_research/citation-audit.md`. **WebFetch: yes.** Catches: fabricated, mis-attributed, orphan, unused, ambiguous citations.
@@ -103,7 +102,6 @@ Each command can be invoked at the project root or with an explicit path. Aliase
 **Usage:**
 ```bash
 /theory-forge:consistency              # current project
-/consistency                           # alias
 ```
 
 **Output:** `_research/consistency-report.md`. WebFetch: no.
@@ -118,7 +116,6 @@ Each command can be invoked at the project root or with an explicit path. Aliase
 ```bash
 /theory-forge:falsifiability           # audit only (read-only)
 /theory-forge:falsifiability --draft   # propose four-block expansions for Major findings
-/falsifiability                        # alias
 ```
 
 **Output:** `_research/falsifiability-audit.md`. WebFetch: no. *Anti-pattern caught: unmarked speculation passed as established fact.*
@@ -133,7 +130,6 @@ Each command can be invoked at the project root or with an explicit path. Aliase
 ```bash
 /theory-forge:argument-structure
 /theory-forge:argument-structure --draft   # propose missing warrants
-/argument-structure                        # alias
 ```
 
 **Output:** `_research/argument-structure-report.md`. WebFetch: no.
@@ -148,7 +144,6 @@ Each command can be invoked at the project root or with an explicit path. Aliase
 ```bash
 /theory-forge:scope
 /theory-forge:scope --draft             # propose inline qualifier text
-/scope                                  # alias
 ```
 
 **Output:** `_research/scope-audit.md`. WebFetch: no.
@@ -164,7 +159,6 @@ Each command can be invoked at the project root or with an explicit path. Aliase
 /theory-forge:concept-import
 /theory-forge:concept-import --lexicon my-imports.txt   # extend the default catalog
 /theory-forge:concept-import --draft                    # propose tier markers
-/concept-import                                         # alias
 ```
 
 **Output:** `_research/concept-import-audit.md`. WebFetch: no. *Anti-pattern caught: concept smuggling (importing a term's authority without its content).*
@@ -180,7 +174,6 @@ Each command can be invoked at the project root or with an explicit path. Aliase
 /theory-forge:counter-argument
 /theory-forge:counter-argument --opposition-map my-oppositions.yaml
 /theory-forge:counter-argument --draft   # propose engagement paragraphs
-/counter-argument                        # alias
 ```
 
 **Output:** `_research/counter-argument-audit.md`. WebFetch: no.
@@ -196,7 +189,6 @@ Each command can be invoked at the project root or with an explicit path. Aliase
 /theory-forge:cross-lang                                          # audit only (default)
 /theory-forge:cross-lang --generate                               # safe scaffolds (templates with reference-grammar pointers)
 /theory-forge:cross-lang --generate-surface --i-have-native-speaker-review   # concrete example sentences (unverified, must-review)
-/cross-lang                                                       # alias
 ```
 
 **Output:** `_research/cross-lang-audit.md`. WebFetch: no. *Anti-hallucination: concrete-surface generation requires two flags and is marked with HTML comments for future audit traceability.*
@@ -213,7 +205,6 @@ Each command can be invoked at the project root or with an explicit path. Aliase
 /theory-forge:propagate --since HEAD~3                             # propagate all doc changes in the last 3 commits
 /theory-forge:propagate docs/foundations/core-concept.md --dry-run # report only, do not apply
 /theory-forge:propagate docs/foundations/core-concept.md --save    # save propagation report
-/propagate docs/foundations/core-concept.md                        # alias
 ```
 
 **Output:** `_research/propagation-report-{timestamp}.md` + per-confirmed-file Edits. WebFetch: no. **Safety: never modifies the source; uses Edit (not Write); never auto-applies LOW/AMBIGUOUS confidence changes.**
@@ -224,9 +215,9 @@ Each command can be invoked at the project root or with an explicit path. Aliase
 
 **Pre-submission audit:**
 ```bash
-/theory-forge .                      # full suite — review master report
+/theory-forge:theory-forge .         # full suite — review master report
 # fix the Critical and Major findings
-/theory-forge .                      # re-run to verify
+/theory-forge:theory-forge .         # re-run to verify
 ```
 
 **After editing a foundational definition:**

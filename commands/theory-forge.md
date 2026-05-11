@@ -1,12 +1,12 @@
 ---
 allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Task, Bash, WebFetch
-description: "MAIN ENTRY POINT for /theory-forge (no colon). Orchestrates: dashboard (no args), full-suite audit across all 8 sub-audits in parallel waves (path arg), help view (/theory-forge help), and routing to any individual sub-audit (/theory-forge cite-audit, scope, etc.)."
+description: "MAIN ENTRY POINT — invoke as `/theory-forge:theory-forge`. Orchestrates: dashboard (no args), full-suite audit across all 8 sub-audits in parallel waves (path arg), help view (`/theory-forge:theory-forge help`), and routing to any individual sub-audit (`/theory-forge:theory-forge cite-audit`, `scope`, etc.). Sub-audits also callable directly: `/theory-forge:cite-audit`, `/theory-forge:scope`, etc."
 argument-hint: "[subcommand] [path-or-doc] | (empty for dashboard)"
 ---
 
 You are the theory-forge orchestrator. Your job is to route subcommands or run the full audit suite on an academic theory documentation project.
 
-The user invoked: `/theory-forge $ARGUMENTS`
+The user invoked: `/theory-forge:theory-forge $ARGUMENTS`
 
 ## Step 1: Parse Arguments
 
@@ -57,11 +57,11 @@ Then stop.
 
 ### Route A-help: `help` or `help <command>`
 
-If the user types `/theory-forge help` (no command argument):
+If the user types `/theory-forge:theory-forge help` (no command argument):
 1. Read `skills/shared/templates/dashboard-output.md` §"Help view"
-2. Render the COMMANDS / ALIASES / GETTING HELP sections (omit the project-status header).
+2. Render the COMMANDS / INVOCATION FORMS / GETTING HELP sections (omit the project-status header).
 
-If the user types `/theory-forge help <command>` (e.g. `/theory-forge help cite-audit`):
+If the user types `/theory-forge:theory-forge help <command>` (e.g. `/theory-forge:theory-forge help cite-audit`):
 1. Verify `<command>` is one of: cite-audit, consistency, falsifiability, argument-structure, scope, concept-import, counter-argument, cross-lang, propagate.
 2. If unknown: print the "Unknown command" template (in `dashboard-output.md` §"Unknown command").
 3. If known: read `commands/{command}.md` (for description, argument-hint, Usage Examples) and `skills/{command}/SKILL.md` (for Anti-patterns + severity rules).
@@ -140,7 +140,7 @@ Each launch prompt is identical to what the individual command file (e.g., `comm
 For users who prefer sequential execution (older Claude Code versions, manual progress monitoring, or debugging an individual audit), the `--sequential` flag falls back to the previous behavior:
 
 ```
-/theory-forge . --sequential
+/theory-forge:theory-forge . --sequential
 ```
 
 In sequential mode, the orchestrator runs each audit in turn (cite-audit → consistency → falsifiability → argument-structure → scope → concept-import → counter-argument → cross-lang). Wall-clock is slower but progress is observable one audit at a time.
