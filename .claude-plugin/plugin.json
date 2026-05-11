@@ -1,7 +1,7 @@
 {
   "name": "theory-forge",
   "description": "Academic-rigor toolkit for theory documentation — citation truth, cross-section consistency, falsifiability + Type A/B/C/D/E framing, Toulmin argument structure, scope discipline, cross-disciplinary concept-import tier marking, counter-argument engagement, and cross-linguistic worked-example coverage. Built for linguistics, cognitive science, philosophy-of-language, and education-theory docs. bold hypothesis, rigorous verification, honest labeling.",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "author": {
     "name": "tercel",
     "url": "https://github.com/tercel",

@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Task, Bash, WebFetch
-description: "Use when running the full academic-rigor audit suite — citations, consistency, falsifiability, and cross-linguistic coverage — on a theory documentation project"
+description: "MAIN ENTRY POINT for /theory-forge (no colon). Orchestrates: dashboard (no args), full-suite audit across all 8 sub-audits in parallel waves (path arg), help view (/theory-forge help), and routing to any individual sub-audit (/theory-forge cite-audit, scope, etc.)."
 argument-hint: "[subcommand] [path-or-doc] | (empty for dashboard)"
 ---
 

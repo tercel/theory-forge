@@ -7,7 +7,7 @@ Rendered by `commands/theory-forge.md` Route A and Route A-help. The orchestrato
 Render this template, filling in the `{placeholder}` values:
 
 ```
-theory-forge 0.2.1 — Academic-Rigor Toolkit for Theory Documentation
+theory-forge 0.2.3 — Academic-Rigor Toolkit for Theory Documentation
 
 Project detected: {project-name or "(not a theory project — pass a path)"}
 Bibliography: {bibliography-path or "(not found)"}
@@ -90,7 +90,8 @@ GETTING HELP
 
   /theory-forge help                           # this view (no project-status header)
   /theory-forge help <command>                 # detailed help for one command
-                                                  (e.g. /theory-forge help cite-audit)
+  /theory-forge:help                           # same as /theory-forge help (direct skill)
+  /theory-forge:help <command>                 # e.g. /theory-forge:help cite-audit
 
 Full reference:
   README.md  — overview, design principles, counter-argument engagement
