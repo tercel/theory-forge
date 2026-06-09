@@ -16,11 +16,12 @@
 # 1c. Get detailed help for one command
 /theory-forge:theory-forge help cite-audit
 
-# 2. Run the full audit suite (all 8 audits, sequential)
+# 2. Run the full audit suite (all 9 audits)
 /theory-forge:theory-forge .
 
 # 3. Or pick a single audit
 /theory-forge:cite-audit              # citation truth + bibliography integrity
+/theory-forge:evidence-strength       # does each source actually support its claim?
 /theory-forge:consistency             # cross-section coherence
 /theory-forge:falsifiability          # Type A/B/C/D/E framing
 /theory-forge:argument-structure      # Toulmin completeness + fallacies
@@ -68,7 +69,7 @@ Each command can be invoked at the project root or with an explicit path. Claude
 
 ### `/theory-forge:theory-forge` — orchestrator + dashboard
 
-**Purpose:** With no arguments, shows the project audit dashboard. With a path, runs all 8 audits and aggregates.
+**Purpose:** With no arguments, shows the project audit dashboard. With a path, runs all 9 audits and aggregates.
 
 **Usage:**
 ```bash
@@ -92,6 +93,20 @@ Each command can be invoked at the project root or with an explicit path. Claude
 ```
 
 **Output:** `_research/citation-audit.md`. **WebFetch: yes.** Catches: fabricated, mis-attributed, orphan, unused, ambiguous citations.
+
+---
+
+### `/theory-forge:evidence-strength` — does the source actually support the claim?
+
+**Purpose:** The deep read that `cite-audit` (existence/attribution) and `falsifiability` (marking) both leave open: for every claim that cites a source, judge whether the source actually establishes what the claim asserts — at the same **strength** and **scope**. Catches **over-leverage**, the dominant failure mode in citation-dense theory work: a correlation read as a cause, an English-only result read as a universal, a paper cited as motivation read as direct evidence. Assigns a seven-level evidence-status verdict (`accurate` / `accurate-with-caveat` / `overstated` / `indirect` / `misattributed` / `counterevidence` / `unsupported`) and a graded remediation.
+
+**Usage:**
+```bash
+/theory-forge:evidence-strength            # current project
+/theory-forge:evidence-strength ../paper   # specific project
+```
+
+**Output:** `_research/evidence-strength-audit.md`. **WebFetch: yes** (reuses `cite-audit`'s verified-source results when present). *Weaken the claim before deleting the source* — most weak-support findings recommend downgrading the claim, keeping the citation. A **remove-the-citation** recommendation fires only at the bottom rung (`unsupported` / site-level `misattributed`), passes a removal gate (corroboration required, load-bearing warning, classic/methodology downweight, two-stage bibliography prune), and is **never auto-applied**.
 
 ---
 
@@ -220,6 +235,15 @@ Each command can be invoked at the project root or with an explicit path. Claude
 /theory-forge:theory-forge .         # re-run to verify
 ```
 
+**Evidence-accounting pass (citation-dense theory work):**
+```bash
+/theory-forge:cite-audit             # 1. every cited paper is real + attributed
+/theory-forge:evidence-strength      # 2. every source actually supports its claim, at strength
+# most findings → downgrade the claim (keep the citation); a few → remove an unsupported citation
+/theory-forge:falsifiability         # 3. mark the downgraded claims as predictions (Type E)
+/theory-forge:cite-audit             # 4. re-run to prune any bibliography entries orphaned by removals
+```
+
 **After editing a foundational definition:**
 ```bash
 /theory-forge:consistency            # check formal-def vs narrative still aligned
@@ -261,7 +285,10 @@ Each command can be invoked at the project root or with an explicit path. Claude
 | Failure mode | spec-forge | theory-forge |
 |---|---|---|
 | Cited paper doesn't exist (fabricated) | ❌ | ✅ via WebFetch (CrossRef + Semantic Scholar + OpenAlex) |
-| Cited paper exists but doesn't support the claim | ❌ | ✅ via keyword/abstract alignment check |
+| Cited paper exists but doesn't support the claim | ❌ | ✅ coarse keyword screen (`cite-audit`) + deep claim-vs-source read (`evidence-strength`) |
+| Source supports a *weaker* claim than the text asserts (over-leverage: correlation→cause, English-only→universal, motivation→evidence) | ❌ | ✅ (`evidence-strength` — `overstated` / `indirect` verdict, claim-downgrade remediation) |
+| Source actually *contradicts* the claim but is cited as support (counterevidence-as-support) | ❌ | ✅ (`evidence-strength` — `counterevidence` verdict) |
+| Quantitative effect claim (2×, 30–50%) with no source, or a citation with zero support | ❌ | ✅ (`evidence-strength` — `unsupported`; propose-only removal candidate) |
 | Bibliography orphan (cited but no entry) | ❌ | ✅ |
 | Formal definition omits component listed in narrative | ⚠️ (partial) | ✅ (granularity-aware) |
 | Universality claim with only English examples | ❌ | ✅ (typological-family taxonomy) |
@@ -278,6 +305,7 @@ Each command can be invoked at the project root or with an explicit path. Claude
 All audit reports are written to `<docs-root>/_research/` (underscore-prefix so MkDocs and similar generators can be configured to ignore them by default):
 
 - `_research/citation-audit.md` — fabricated / mis-attributed / orphan / unused citations
+- `_research/evidence-strength-audit.md` — claim-vs-source support verdicts (over-leverage, counterevidence-as-support, unsupported) + removal candidates
 - `_research/consistency-report.md` — cross-section component-list inconsistencies
 - `_research/falsifiability-audit.md` — claims classified A/B/C/D/E, gaps flagged
 - `_research/argument-structure-report.md` — Toulmin coverage per claim, fallacy detections

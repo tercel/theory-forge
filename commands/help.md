@@ -12,7 +12,7 @@ You are the theory-forge help display. The user invoked: `/theory-forge:help $AR
 
 2. Parse `$ARGUMENTS`:
    - **Empty** → render the "Help view" section (COMMANDS / INVOCATION FORMS / GETTING HELP blocks; omit project-status header lines).
-   - **Known command name** (`cite-audit`, `consistency`, `falsifiability`, `argument-structure`, `scope`, `concept-import`, `counter-argument`, `cross-lang`, `propagate`) → render the "Detailed help" template:
+   - **Known command name** (`cite-audit`, `evidence-strength`, `consistency`, `falsifiability`, `argument-structure`, `scope`, `concept-import`, `counter-argument`, `cross-lang`, `propagate`) → render the "Detailed help" template:
      - Read `commands/{command}.md` for: description, argument-hint, and Usage Examples block.
      - Read `skills/{command}/SKILL.md` for: Anti-patterns section and severity table.
      - Fill in the "Detailed help" template from `dashboard-output.md`.

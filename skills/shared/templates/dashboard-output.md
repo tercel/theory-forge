@@ -7,7 +7,7 @@ Rendered by `commands/theory-forge.md` Route A and Route A-help. The orchestrato
 Render this template, filling in the `{placeholder}` values:
 
 ```
-theory-forge 0.2.3 — Academic-Rigor Toolkit for Theory Documentation
+theory-forge 0.5.0 — Academic-Rigor Toolkit for Theory Documentation
 
 Project detected: {project-name or "(not a theory project — pass a path)"}
 Bibliography: {bibliography-path or "(not found)"}
@@ -22,7 +22,7 @@ Recent audit reports (_research/):
 COMMANDS — usage examples
 ──────────────────────────────────────────────────────────────────────────────
 
-Full suite (run all 8 audits and aggregate, parallel-wave execution)
+Full suite (run all 9 audits and aggregate, parallel-wave execution)
   /theory-forge:theory-forge .                              # current project
   /theory-forge:theory-forge ../another-theory-project      # different project
   /theory-forge:theory-forge . --sequential                 # sequential fallback (slower, observable)
@@ -31,6 +31,13 @@ cite-audit  — verify every citation is real (CrossRef + Semantic Scholar + Ope
   /theory-forge:cite-audit                     # audit current project
   /theory-forge:cite-audit ../paper            # audit a specific path
   → writes _research/citation-audit.md         (WebFetch: yes)
+
+evidence-strength  — does each cited source actually support the claim, at the same strength?
+  /theory-forge:evidence-strength              # audit current project
+  /theory-forge:evidence-strength ../paper     # audit a specific path
+  → writes _research/evidence-strength-audit.md  (WebFetch: yes; reuses cite-audit results)
+    catches over-leverage (correlation→cause, English-only→universal, motivation→evidence),
+    misattribution, counterevidence-as-support, unsupported claims; flags removal candidates
 
 consistency  — cross-section coherence (granularity-aware T1/T2/T3)
   /theory-forge:consistency
@@ -149,7 +156,7 @@ For an unknown command (`/theory-forge:theory-forge help foo`):
 Unknown command: foo.
 
 Available commands:
-  cite-audit, consistency, falsifiability, argument-structure,
+  cite-audit, evidence-strength, consistency, falsifiability, argument-structure,
   scope, concept-import, counter-argument, cross-lang, propagate
 
 Run `/theory-forge:theory-forge help` to see all commands with usage examples.

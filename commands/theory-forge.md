@@ -1,6 +1,6 @@
 ---
 allowed-tools: Read, Glob, Grep, Write, Edit, AskUserQuestion, Task, Bash, WebFetch
-description: "MAIN ENTRY POINT — invoke as `/theory-forge:theory-forge`. Orchestrates: dashboard (no args), full-suite audit across all 8 sub-audits in parallel waves (path arg), help view (`/theory-forge:theory-forge help`), and routing to any individual sub-audit (`/theory-forge:theory-forge cite-audit`, `scope`, etc.). Sub-audits also callable directly: `/theory-forge:cite-audit`, `/theory-forge:scope`, etc."
+description: "MAIN ENTRY POINT — invoke as `/theory-forge:theory-forge`. Orchestrates: dashboard (no args), full-suite audit across all 9 sub-audits in parallel waves (path arg), help view (`/theory-forge:theory-forge help`), and routing to any individual sub-audit (`/theory-forge:theory-forge cite-audit`, `scope`, etc.). Sub-audits also callable directly: `/theory-forge:cite-audit`, `/theory-forge:scope`, etc."
 argument-hint: "[subcommand] [path-or-doc] | (empty for dashboard)"
 ---
 
@@ -15,6 +15,7 @@ Parse `$ARGUMENTS` into `subcommand` and `argument`:
 | Input Pattern | subcommand | argument |
 |---|---|---|
 | `cite-audit ../some-project` | `cite-audit` | `../some-project` |
+| `evidence-strength` | `evidence-strength` | (cwd) |
 | `consistency` | `consistency` | (cwd) |
 | `falsifiability ../some-project` | `falsifiability` | `../some-project` |
 | `cross-lang` | `cross-lang` | (cwd) |
@@ -38,8 +39,8 @@ Routing table summary:
 | `dashboard` (no args) | Route A — full dashboard with project status + command usage |
 | `help` (no command argument) | Route A-help — command usage only (no project status) |
 | `help <command>` | Route A-help-detail — detailed help for one command |
-| `cite-audit`, `consistency`, `falsifiability`, `argument-structure`, `scope`, `concept-import`, `counter-argument`, `cross-lang`, `propagate` | Route B — hand off to that command file |
-| `full-suite` | Route C — run all 8 audits and aggregate |
+| `cite-audit`, `evidence-strength`, `consistency`, `falsifiability`, `argument-structure`, `scope`, `concept-import`, `counter-argument`, `cross-lang`, `propagate` | Route B — hand off to that command file |
+| `full-suite` | Route C — run all 9 audits and aggregate |
 
 ### Route A: `dashboard` (no arguments)
 
@@ -62,14 +63,14 @@ If the user types `/theory-forge:theory-forge help` (no command argument):
 2. Render the COMMANDS / INVOCATION FORMS / GETTING HELP sections (omit the project-status header).
 
 If the user types `/theory-forge:theory-forge help <command>` (e.g. `/theory-forge:theory-forge help cite-audit`):
-1. Verify `<command>` is one of: cite-audit, consistency, falsifiability, argument-structure, scope, concept-import, counter-argument, cross-lang, propagate.
+1. Verify `<command>` is one of: cite-audit, evidence-strength, consistency, falsifiability, argument-structure, scope, concept-import, counter-argument, cross-lang, propagate.
 2. If unknown: print the "Unknown command" template (in `dashboard-output.md` §"Unknown command").
 3. If known: read `commands/{command}.md` (for description, argument-hint, Usage Examples) and `skills/{command}/SKILL.md` (for Anti-patterns + severity rules).
 4. Render the "Detailed help" template (in `dashboard-output.md` §"Detailed help"), filling in the per-command values.
 
 ### Route B: subcommand routing
 
-For `cite-audit`, `consistency`, `falsifiability`, `cross-lang`, `argument-structure`, `scope`, `concept-import`, `counter-argument`, `propagate`:
+For `cite-audit`, `evidence-strength`, `consistency`, `falsifiability`, `cross-lang`, `argument-structure`, `scope`, `concept-import`, `counter-argument`, `propagate`:
 
 Invoke the corresponding command. For example, for `cite-audit`:
 
@@ -81,9 +82,9 @@ This is a hand-off — load and execute that command's workflow (read the file a
 
 ### Route C: `full-suite` — Run all audits (parallel-wave execution)
 
-This is the orchestrator's core value-add. **Execution model: two parallel waves of 4 audits each.** All 8 audits are mutually independent (no inter-audit data dependency — each reads the project state independently, none consume another's output file). The parallel-wave model exploits this independence for ~4× wall-clock speedup while maintaining safety.
+This is the orchestrator's core value-add. **Execution model: two parallel waves — 4 audits in Wave 1, 5 in Wave 2.** Eight of the nine audits are mutually independent (no inter-audit data dependency — each reads the project state independently). The one exception is `evidence-strength`, which **reuses `cite-audit`'s verified-source results** to avoid re-fetching; it is therefore placed in Wave 2, after `cite-audit` (Wave 1) has produced `citation-audit.md`. If that report is absent (e.g., cite-audit failed), `evidence-strength` falls back to fetching its own sources. The parallel-wave model exploits the remaining independence for ~4× wall-clock speedup while maintaining safety.
 
-**Why two waves of 4 rather than all 8 at once:** Claude Code's Task tool supports parallel sub-agent invocations within a single message; running 4 concurrent is a known-stable bound. 8-at-once may exceed rate limits or system constraints; 4-at-a-time is the conservative default.
+**Why waves of 4 + 5 rather than all 9 at once:** Claude Code's Task tool supports parallel sub-agent invocations within a single message; running ~4–5 concurrent is a known-stable bound. 9-at-once may exceed rate limits or system constraints; the split is the conservative default. The wave boundary also enforces the one real dependency — `evidence-strength` (Wave 2) must run after `cite-audit` (Wave 1).
 
 **Wave 1** (launch all 4 in a single message via parallel `Task` calls):
 
@@ -94,16 +95,17 @@ This is the orchestrator's core value-add. **Execution model: two parallel waves
 | `falsifiability` | Local-only, fast | no |
 | `cross-lang` | Local-only, independent | no |
 
-**Wave 2** (after Wave 1 completes, launch all 4 in a single message):
+**Wave 2** (after Wave 1 completes, launch all 5 in a single message):
 
 | Audit | Why this wave |
 |---|---|
+| `evidence-strength` | **Real data dependency** — reuses `cite-audit`'s verified-source results from Wave 1 (falls back to its own fetches if `citation-audit.md` is absent) |
 | `argument-structure` | Falls in Wave 2 because some readers find it most useful after seeing falsifiability output (UX consideration only — not a data dependency) |
 | `scope` | Similar UX rationale |
 | `concept-import` | Independent |
 | `counter-argument` | Independent |
 
-**Why not run all 8 in Wave 1:** purely a wall-clock-safety choice. If empirically 8-at-once works reliably for a particular Claude Code version, this can be relaxed to a single 8-wide wave for further speedup.
+**Why not run all 9 in Wave 1:** partly a wall-clock-safety choice, partly the one genuine dependency (`evidence-strength` after `cite-audit`). If empirically a wider wave works reliably for a particular Claude Code version, the independent audits can be collapsed — but keep `evidence-strength` strictly after `cite-audit`.
 
 **`propagate`** is skipped in full-suite mode — it requires a specific upstream-edited doc as input.
 
@@ -120,13 +122,14 @@ Wave 1 dispatch (one message, four Task tool calls in parallel):
 
 Wait for all four results.
 
-Wave 2 dispatch (one message, four Task tool calls in parallel):
+Wave 2 dispatch (one message, five Task tool calls in parallel):
+  Task(subagent_type="general-purpose", prompt=<evidence-strength launch prompt>)  # reuses Wave 1 cite-audit output
   Task(subagent_type="general-purpose", prompt=<argument-structure launch prompt>)
   Task(subagent_type="general-purpose", prompt=<scope launch prompt>)
   Task(subagent_type="general-purpose", prompt=<concept-import launch prompt>)
   Task(subagent_type="general-purpose", prompt=<counter-argument launch prompt>)
 
-Wait for all four results.
+Wait for all five results.
 
 Aggregate.
 ```
@@ -143,7 +146,7 @@ For users who prefer sequential execution (older Claude Code versions, manual pr
 /theory-forge:theory-forge . --sequential
 ```
 
-In sequential mode, the orchestrator runs each audit in turn (cite-audit → consistency → falsifiability → argument-structure → scope → concept-import → counter-argument → cross-lang). Wall-clock is slower but progress is observable one audit at a time.
+In sequential mode, the orchestrator runs each audit in turn (cite-audit → evidence-strength → consistency → falsifiability → argument-structure → scope → concept-import → counter-argument → cross-lang). `evidence-strength` runs immediately after `cite-audit` so it can reuse the just-written `citation-audit.md`. Wall-clock is slower but progress is observable one audit at a time.
 
 After both waves complete, write the master report at `_research/theory-forge-master-report.md`.
 
@@ -156,6 +159,6 @@ After all sub-audits complete, display the aggregate summary and recommend the t
 ## Notes
 
 - The orchestrator does not run `propagate` in full-suite mode because `propagate` requires a specific changed-document argument. Mention this in the dashboard.
-- If WebFetch is unavailable (offline mode), only `cite-audit` is affected — it produces a partial report flagged as such. `consistency`, `falsifiability`, and `cross-lang` are all local-only and unaffected.
+- If WebFetch is unavailable (offline mode), `cite-audit` and `evidence-strength` are affected — both verify sources over the network and produce partial reports flagged as such (`evidence-strength` marks claims strength-uncheckable rather than guessing). `consistency`, `falsifiability`, `argument-structure`, `scope`, `concept-import`, `counter-argument`, and `cross-lang` are all local-only and unaffected.
 - The orchestrator never auto-applies fixes. Each sub-audit's Step 8 (opt-in fix offer) runs independently if invoked directly; in full-suite mode all fix offers are deferred until the master report is presented and the user can decide which audits to act on.
-- **Critical findings escalate.** If any sub-audit produces a Critical finding (currently only `cite-audit` can — fabricated citations), the master report's status is `REVIEW REQUIRED — CRITICAL` and the fix-offer is suppressed until the user acknowledges the Critical findings.
+- **Critical findings escalate.** If any sub-audit produces a Critical finding (`cite-audit` — fabricated citations; `evidence-strength` — counterevidence cited as support for a central claim), the master report's status is `REVIEW REQUIRED — CRITICAL` and the fix-offer is suppressed until the user acknowledges the Critical findings.

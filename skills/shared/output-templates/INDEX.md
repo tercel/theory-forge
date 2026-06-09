@@ -10,6 +10,7 @@ This separation:
 | Audit | Template |
 |---|---|
 | cite-audit | `cite-audit-report.md` |
+| evidence-strength | `evidence-strength-audit.md` |
 | consistency | `consistency-report.md` |
 | falsifiability | `falsifiability-audit.md` |
 | argument-structure | `argument-structure-report.md` |

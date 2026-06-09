@@ -2,7 +2,7 @@
 name: theory-forge
 description: >
   Main entry point invoked as `/theory-forge:theory-forge`. Routes to
-  dashboard (no args), full-suite audit across all 8 sub-audits with
+  dashboard (no args), full-suite audit across all 9 sub-audits with
   parallel-wave execution (path arg), help view (help arg), or any
   individual sub-audit by name. Sub-audits are also callable directly
   (`/theory-forge:scope`, `/theory-forge:cite-audit`, etc.) — use those

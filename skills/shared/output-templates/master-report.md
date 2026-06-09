@@ -2,13 +2,14 @@
 **Project:** {project-name}
 **Date:** {ISO date}
 **Suite version:** {plugin version}
-**Execution model:** parallel-wave (Wave 1: cite-audit + consistency + falsifiability + cross-lang; Wave 2: argument-structure + scope + concept-import + counter-argument)
+**Execution model:** parallel-wave (Wave 1: cite-audit + consistency + falsifiability + cross-lang; Wave 2: evidence-strength + argument-structure + scope + concept-import + counter-argument)
 
 ## Aggregate Summary
 
 | Audit | Critical | Major | Minor | Info | Status |
 |---|---|---|---|---|---|
 | cite-audit         | {n} | {n} | {n} | {n} | {PASS/REVIEW REQUIRED} |
+| evidence-strength  | {n} | {n} | {n} | {n} | {PASS/REVIEW REQUIRED} |
 | consistency        | {n} | {n} | {n} | {n} | {PASS/REVIEW REQUIRED} |
 | falsifiability     | {n} | {n} | {n} | {n} | {PASS/REVIEW REQUIRED} |
 | argument-structure | {n} | {n} | {n} | {n} | {PASS/REVIEW REQUIRED} |
@@ -21,6 +22,7 @@
 ## Sub-Reports
 
 - [Citation Audit](./citation-audit.md)
+- [Evidence-Strength Audit](./evidence-strength-audit.md)
 - [Consistency Report](./consistency-report.md)
 - [Falsifiability Audit](./falsifiability-audit.md)
 - [Argument Structure Report](./argument-structure-report.md)

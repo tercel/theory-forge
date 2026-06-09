@@ -37,7 +37,7 @@ After installing the plugin:
 
 ### `/theory-forge:theory-forge` (orchestrator + dashboard)
 
-**Purpose:** Top-level entry. With no arguments, shows the project's audit dashboard. With a path argument, runs all 8 audits in sequence and aggregates them.
+**Purpose:** Top-level entry. With no arguments, shows the project's audit dashboard. With a path argument, runs all 9 audits and aggregates them.
 
 **Examples:**
 
@@ -84,6 +84,38 @@ After installing the plugin:
 - Never auto-fixes Critical findings — requires user acknowledgment
 - For Major mis-attribution: propose-only, does not auto-replace
 - WebFetch is rate-limited; report flags partial results if network issues
+
+---
+
+### `/theory-forge:evidence-strength` (claim-vs-source support)
+
+**Purpose:** The deep read past `cite-audit` and `falsifiability`: for each claim that cites a source, judge whether the source actually establishes what the claim asserts — same direction, same strength, same scope. Catches **over-leverage** (correlation read as cause, English-only result read as universal, motivation read as direct evidence), misattribution, counterevidence-cited-as-support, and unsupported claims. Reads what the source concludes (abstract/findings), not keyword overlap; reuses `cite-audit`'s verification when present.
+
+**Examples:**
+
+```
+# Audit current project
+/theory-forge:evidence-strength
+
+# Best paired right after cite-audit (reuses its verified-source results)
+/theory-forge:cite-audit && /theory-forge:evidence-strength
+```
+
+**Output:** `_research/evidence-strength-audit.md` with a seven-level verdict per claim:
+- **Critical**: `counterevidence` cited as support for a central claim
+- **Major**: `overstated` (central), `misattributed`, load-bearing `indirect`, `unsupported`
+- **Minor**: `accurate-with-caveat`, peripheral `overstated` / `indirect`
+- **Info**: `accurate`; `strength-uncheckable` (source content not retrievable)
+
+Plus a **Removal Candidates** section — propose-only suggestions to remove citations whose support is absent.
+
+**When to use:** Citation-dense theory work where the risk is not fabrication but over-claiming — adjacent results and design motivation upgraded into the theory's own mechanism or effect. Run it after `cite-audit`, before `falsifiability`.
+
+**Safety guards:**
+- *Weaken the claim before deleting the source*: most findings recommend downgrading the claim and keeping the citation
+- Citation removal fires only for `unsupported` / site-level `misattributed`, passes the removal gate, and is **never auto-applied** (per-item confirmation)
+- A verdict above Info requires the source to be actually checked; otherwise marked `strength-uncheckable`, never escalated
+- Removing an inline citation never prunes its bibliography entry in the same step — orphaned entries route to `cite-audit`'s unused check
 
 ---
 
@@ -300,7 +332,7 @@ Before submitting a paper to a journal:
 /theory-forge:cite-audit
 ```
 
-Expected outcome: all 8 audits status PASS or near-PASS (≤2 Minor findings each).
+Expected outcome: all 9 audits status PASS or near-PASS (≤2 Minor findings each).
 
 ---
 

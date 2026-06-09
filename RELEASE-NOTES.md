@@ -1,5 +1,46 @@
 # theory-forge — Release Notes
 
+## 0.5.0 (evidence-strength — claim-vs-source support audit)
+
+New ninth sub-audit: **`evidence-strength`**. It closes the gap that `cite-audit`
+(existence/attribution) and `falsifiability` (marking) both leave open — *does the
+cited source actually establish what the claim asserts, at the same strength and
+scope?* This targets **over-leverage**, the dominant failure mode in
+citation-dense theory work: a correlation read as a cause, an English-only result
+read as a universal, a paper cited as motivation read as direct evidence.
+
+### What it does
+
+- Assigns each cited claim a seven-level **evidence-status verdict** — `accurate`
+  / `accurate-with-caveat` / `overstated` / `indirect` / `misattributed` /
+  `counterevidence` / `unsupported` — by reading what the source concludes
+  (abstract/findings), not by keyword overlap.
+- Maps each verdict to a **graded remediation**. The governing principle is
+  *weaken the claim before deleting the source*: `overstated` / `indirect` /
+  `accurate-with-caveat` / `counterevidence` all **keep the citation** and change
+  the claim or its framing.
+- **Citation-removal recommendation** (the user-requested capability) fires only
+  at the bottom rung — `unsupported` and site-level `misattributed` — passes a
+  removal gate (corroboration required; load-bearing warning; classic/methodology
+  downweight; two-stage bibliography prune routed to `cite-audit`), and is
+  **never auto-applied**.
+- Includes an **evidence-layer ladder** (behavioral → descriptive-internal →
+  causal → domain-specific) so a Layer-1/2 source cited for a Layer-3/4
+  conclusion is flagged.
+
+### Wiring
+
+- New: `skills/evidence-strength/SKILL.md`, `commands/evidence-strength.md`,
+  `skills/shared/evidence-status-ladder.md`,
+  `skills/shared/output-templates/evidence-strength-audit.md`.
+- Full-suite is now **9 audits**. Execution model: Wave 1 (4) + Wave 2 (5).
+  `evidence-strength` runs in Wave 2 because it **reuses `cite-audit`'s
+  verified-source results** (the one genuine inter-audit dependency); it falls
+  back to its own fetches if `citation-audit.md` is absent.
+- `evidence-strength` can now also raise **Critical** (counterevidence cited as
+  support for a central claim), alongside `cite-audit`'s fabricated-citation
+  Critical.
+
 ## 0.2.2 (token + parallelism optimization)
 
 Four optimizations to reduce per-invocation token consumption and wall-clock time, **without sacrificing correctness or quality**.
